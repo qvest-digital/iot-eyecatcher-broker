@@ -1,0 +1,7 @@
+bin
+pkg
+.idea
+*.iml
+Dockerfile
+LICENSE
+README.md
