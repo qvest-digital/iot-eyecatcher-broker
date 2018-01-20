@@ -1,10 +1,8 @@
-FROM golang:alpine AS build-env
-ADD ./src/iot-eyecatcher-broker /gopath/src/iot-eyecatcher-broker
-ENV GOPATH=/
-RUN apk update && \
-    apk upgrade && \
-    apk add git && \
-    cd /gopath/src/iot-eyecatcher-broker && \
+FROM golang AS build-env
+ADD . /gopath/src/github.com/tarent/iot-eyecatcher-broker
+RUN cd /gopath/src/github.com/tarent/iot-eyecatcher-broker && \
+    export GOPATH=/gopath && \
+    export PATH=$PATH:/gopath/bin && \
     go get ./... && \
     go get -t ./... && \
     go generate && \
@@ -15,5 +13,7 @@ FROM scratch
 USER 100:100
 EXPOSE 8080
 ENV WS_LISTEN=:8080
+ENV USERNAME=tarent
+ENV PASSWORD=changeme
 COPY --from=build-env /iot-eyecatcher-broker /iot-eyecatcher-broker
 ENTRYPOINT ["/iot-eyecatcher-broker"]

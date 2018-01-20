@@ -20,6 +20,16 @@ func main() {
 		listen = ":8080"
 	}
 
+    username, found := os.LookupEnv("USERNAME")
+    if !found {
+        log.Fatal("Please provide a USERNAME environment variable")
+    }
+
+    password, found := os.LookupEnv("PASSWORD")
+    if !found {
+        log.Fatal("Please provide a PASSWORD environment variable")
+    }
+
 	hub := ws.NewHub()
 	go hub.Run()
 
@@ -44,7 +54,7 @@ func main() {
 
     // Post new message handler
     r.Handle("/{topic}",
-        httpauth.SimpleBasicAuth("dave", "somepassword")(
+        httpauth.SimpleBasicAuth(username, password)(
 		http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
 				broker.MessageHandler(b, w, r)
